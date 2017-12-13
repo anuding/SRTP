@@ -21,7 +21,7 @@ void concentration();
 int main() 
 {
 	
-	void concentration();
+	concentration();
 
 
 	if (averagePic()==-1)//求解平均图
@@ -105,21 +105,22 @@ void concentration()
 	// 查找文件目录下的所有视频文件 
 	//vector<string> videoPathStr = FindAllFile((videoPath + videoSuffix).c_str(), true);
 	// 先读取一个视频文件，用于获取相关的参数 
-	VideoCapture capture("E:/Code_Project/SRTP/CODES/DEMO/DEMO/TEST00.mp4");
+	VideoCapture capture("E:/Code_Project/SRTP/CODES/DEMO/DEMO/TEST100.mp4");
 	// 视频大小 
 	Size videoSize(capture.get(CV_CAP_PROP_FRAME_WIDTH), capture.get(CV_CAP_PROP_FRAME_HEIGHT));
 	// 创建一个视频写入对象 
 	VideoWriter writer("../result.avi", CV_FOURCC('M', 'J', 'P', 'G'), 25.0, videoSize);
 
-	for (auto videoName : "E:/Code_Project/SRTP/CODES/DEMO/DEMO/TEST00.mp4")
+	//for (auto videoName : "E:/Code_Project/SRTP/CODES/DEMO/DEMO/TEST00.mp4")
 	{
-		capture.open(videoName); // 读入路径下的视频
+		//capture.open(videoName); // 读入路径下的视频
 
 		Mat preFrame;
 		bool stop(false);
 
 		double totleFrameNum = capture.get(CV_CAP_PROP_FRAME_COUNT); // 获取视频总帧数
-
+		int coun = 0,q;
+		
 		for (int frameNum = 0; frameNum < totleFrameNum; frameNum++)
 		{
 			Mat imgSrc;
@@ -128,8 +129,8 @@ void concentration()
 				break;
 			Mat frame;
 			cvtColor(imgSrc, frame, CV_BGR2GRAY);
-			++frameNum;
-			if (frameNum == 1)
+			//++frameNum;
+			if (frameNum == 0)
 			{
 				preFrame = frame;
 			}
@@ -141,13 +142,27 @@ void concentration()
 
 			Mat imgRoi = frameDif(roiRect);
 			double matArea = cv::sum(imgRoi)[0];  // 计算区域面积
-
-			if (matArea / (imgRoi.rows*imgRoi.cols) > 0.1) // 面积比例大于10% 
+			
+				
+			
+			if ((matArea / 230400) >= 10) // 面积比例大于10% 
 			{
-				writer << frameDif;// 写入视频 
-				cout << "finished" << endl;
+				string name = "my";
+				coun++;
+				string num;
+				stringstream stream;
+				stream << coun;
+				num = stream.str();   //此处也可以用 stream>>string_temp  
+
+				name = name + num + ".jpg";
+				imwrite(name, imgSrc);
+				
+				cout << "coun= "<< coun<<"   "<<(matArea / 230400) << endl;
 			}
+			q = frameNum;
 		}
+		cout << endl << endl << "q=" << q << endl;
+		coun = 0;
 	}
 	
 	capture.release();
