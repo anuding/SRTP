@@ -155,7 +155,7 @@ void concentration()
 				num = stream.str();   //此处也可以用 stream>>string_temp  
 
 				name = name + num + ".jpg";
-				imwrite(name, imgSrc);
+				//imwrite(name, imgSrc);
 				
 				cout << "coun= "<< coun<<"   "<<(matArea / 230400) << endl;
 			}
