@@ -17,44 +17,163 @@ void compareHist();
 int averagePic();
 void config();
 void concentration();
+void colorClustering();
+void pointClustering();
+
+
 
 int main() 
 {
-	
-	concentration();
+
+	cout<<CV_VERSION<<endl;
+	pointClustering();
+	//colorClustering();
+	//concentration();
 
 
-	if (averagePic()==-1)//求解平均图
-		return 0;
+	//if (averagePic()==-1)//求解平均图
+	//	return 0;
 
-	Mat frame;
+	//Mat frame;
 
-	CvCapture *capture = cvCreateFileCapture("TEST00.mp4");
-	double totalframes=cvGetCaptureProperty(capture, CV_CAP_PROP_FRAME_COUNT);// 获取总帧数
-	
-	cvNamedWindow("原图", 0);
+	//CvCapture *capture = cvCreateFileCapture("TEST00.mp4");
+	//double totalframes=cvGetCaptureProperty(capture, CV_CAP_PROP_FRAME_COUNT);// 获取总帧数
+	//
+	//cvNamedWindow("原图", 0);
 
-	IplImage * Img = cvQueryFrame(capture);
-	
+	//IplImage * Img = cvQueryFrame(capture);
+	//
 
-	for (int i = 0; i <totalframes; i++)//统计背景模型
+	//for (int i = 0; i <totalframes; i++)//统计背景模型
+	//{
+	//	Img = cvQueryFrame(capture);
+	//	int key = waitKey(24);
+	//	if (key == 'q' || key == 'Q' || key == 27)
+	//		break;
+	//	
+	//	if (!Img)
+	//		break;
+	//	cvShowImage("原图", Img);
+	//	cvSaveImage("f1.jpg", Img);
+	//	
+	//	compareHist();
+
+	//}
+
+	//cvDestroyAllWindows();
+	//return 0;
+}
+
+void pointClustering()
+{
+	const int MAX_CLUSTERS = 5;
+	Scalar colorTab[] =     //因为最多只有5类，所以最多也就给5个颜色
 	{
-		Img = cvQueryFrame(capture);
-		int key = waitKey(24);
-		if (key == 'q' || key == 'Q' || key == 27)
-			break;
-		
-		if (!Img)
-			break;
-		cvShowImage("原图", Img);
-		cvSaveImage("f1.jpg", Img);
-		
-		compareHist();
+		Scalar(0, 0, 255),
+		Scalar(0,255,0),
+		Scalar(255,100,100),
+		Scalar(255,0,255),
+		Scalar(0,255,255)
+	};
 
+	Mat img(500, 500, CV_8UC3);
+	RNG rng(12345); //随机数产生器
+
+	for (;;)
+	{
+		int k, clusterCount = rng.uniform(2, MAX_CLUSTERS + 1);
+		int i, sampleCount = rng.uniform(1, 1001);
+		Mat points(sampleCount, 1, CV_32FC2), labels;   //产生的样本数，实际上为2通道的列向量，元素类型为Point2f
+
+		clusterCount = MIN(clusterCount, sampleCount);
+		Mat centers(clusterCount, 1, points.type());    //用来存储聚类后的中心点
+
+														/* generate random sample from multigaussian distribution */
+		for (k = 0; k < clusterCount; k++) //产生随机数
+		{
+			Point center;
+			center.x = rng.uniform(0, img.cols);
+			center.y = rng.uniform(0, img.rows);
+			Mat pointChunk = points.rowRange(k*sampleCount / clusterCount,
+				k == clusterCount - 1 ? sampleCount :
+				(k + 1)*sampleCount / clusterCount);   //最后一个类的样本数不一定是平分的，
+													   //剩下的一份都给最后一类
+													   //每一类都是同样的方差，只是均值不同而已
+			rng.fill(pointChunk, CV_RAND_NORMAL, Scalar(center.x, center.y), Scalar(img.cols*0.05, img.rows*0.05));
+		}
+
+		//randShuffle(points, 1, &rng);   //因为要聚类，所以先随机打乱points里面的点，注意points和pointChunk是共用数据的。
+
+		kmeans(points, clusterCount, labels,
+			TermCriteria(CV_TERMCRIT_EPS + CV_TERMCRIT_ITER, 10, 1.0),
+			3, KMEANS_PP_CENTERS, centers);  //聚类3次，取结果最好的那次，聚类的初始化采用PP特定的随机算法。
+
+		img = Scalar::all(0);
+
+		for (i = 0; i < sampleCount; i++)
+		{
+			int clusterIdx = labels.at<int>(i);
+			Point ipt = points.at<Point2f>(i);
+			circle(img, ipt, 2, colorTab[clusterIdx], CV_FILLED, CV_AA);
+		}
+
+		imshow("clusters", img);
+
+		char key = (char)waitKey();     //无限等待
+		if (key == 27 || key == 'q' || key == 'Q') // 'ESC'
+			break;
+	}
+}
+
+void colorClustering()
+{
+	//VideoCapture capture("E:/Code_Project/SRTP/CODES/DEMO/DEMO/TEST100.mp4");
+	Mat img = imread("f1.jpg", CV_LOAD_IMAGE_UNCHANGED);
+	//capture >> img;
+	Mat samples(img.cols*img.rows, 1, CV_32FC3);
+	//标记矩阵，32位整形 
+	Mat labels(img.cols*img.rows, 1, CV_32SC1);
+
+	uchar* p;
+	int i, j, k = 0;
+	for (i = 0; i < img.rows; i++)
+	{
+		p = img.ptr<uchar>(i);
+		for (j = 0; j< img.cols; j++)
+		{
+			samples.at<Vec3f>(k, 0)[0] = float(p[j * 3]);
+			samples.at<Vec3f>(k, 0)[1] = float(p[j * 3 + 1]);
+			samples.at<Vec3f>(k, 0)[2] = float(p[j * 3 + 2]);
+			k++;
+		}
+	}
+	Mat a();
+	int clusterCount = 3;
+	Mat centers(clusterCount, 1, samples.type());
+	kmeans(samples, clusterCount, labels,
+		TermCriteria(CV_TERMCRIT_EPS + CV_TERMCRIT_ITER, 10, 1.0),
+		3, KMEANS_PP_CENTERS, centers);
+
+//	最后我们把不同的簇用不同灰度来表示，并把结果放在img1中。
+
+		//我们已知有3个聚类，用不同的灰度层表示。 
+		Mat img1(img.rows, img.cols, CV_8UC1);
+	float step = 255 / (clusterCount - 1);
+	k = 0;
+	for (i = 0; i < img1.rows; i++)
+	{
+		p = img1.ptr<uchar>(i);
+		for (j = 0; j< img1.cols; j++)
+		{
+			int tt = labels.at<int>(k, 0);
+			k++;
+			p[j] = 255 - tt*step;
+		}
 	}
 
-	cvDestroyAllWindows();
-	return 0;
+	namedWindow("image1");
+	imshow("image1", img1);
+	waitKey();
 }
 
 void config()
@@ -138,10 +257,10 @@ void concentration()
 			absdiff(frame, preFrame, frameDif); // 帧差法 
 			preFrame = frame;
 
-			threshold(frameDif, frameDif, 30, 255, THRESH_BINARY); // 二值化
+			threshold(frameDif, frameDif, 30, 255, THRESH_BINARY); 
 
 			Mat imgRoi = frameDif(roiRect);
-			double matArea = cv::sum(imgRoi)[0];  // 计算区域面积
+			double matArea = cv::sum(imgRoi)[0]; 
 			
 				
 			
@@ -152,12 +271,12 @@ void concentration()
 				string num;
 				stringstream stream;
 				stream << coun;
-				num = stream.str();   //此处也可以用 stream>>string_temp  
+				num = stream.str();   
 
 				name = name + num + ".jpg";
-				//imwrite(name, imgSrc);
+				imwrite(name, imgSrc);
 				
-				cout << "coun= "<< coun<<"   "<<(matArea / 230400) << endl;
+				cout << "frameNum= "<< frameNum <<"   "<<(matArea / 230400) << endl;
 			}
 			q = frameNum;
 		}
@@ -226,12 +345,6 @@ void compareHist()
 	printf("Done \n");
 	
 }
-
-
-
-
-
-
 
 //////////////////////////////
 
