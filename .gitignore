@@ -53,6 +53,7 @@ artifacts/
 *.obj
 *.pch
 *.pdb
+*.zip
 *.pgc
 *.pgd
 *.rsp
