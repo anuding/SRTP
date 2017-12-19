@@ -88,7 +88,7 @@ void pointClustering()
 		clusterCount = MIN(clusterCount, sampleCount);
 		Mat centers(clusterCount, 1, points.type());    //用来存储聚类后的中心点
 
-														/* generate random sample from multigaussian distribution */
+		/* generate random sample from multigaussian distribution */
 		for (k = 0; k < clusterCount; k++) //产生随机数
 		{
 			Point center;
