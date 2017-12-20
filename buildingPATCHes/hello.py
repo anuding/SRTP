@@ -101,18 +101,18 @@ distorted[:, width // 2:] += 0.075 * np.random.randn(height, width // 2)
 # Extract all reference patches from the left half of the image
 print('Extracting reference patches...')
 t0 = time()
-patch_size = (7, 7)#37-19046,7-29430,50-15276
-#data = extract_patches_2d(distorted[:, :width // 2], patch_size)
+patch_size = (25, 25)#37-19046,7-29430,50-15276
+data = extract_patches_2d(distorted[:, :width // 2], patch_size,3)
 
 
-data = mpimg.imread('7.jpg')
-data = np.array(data)
-data = data[:, :, 0]
-data = data / 255.
-
-# plt.imshow(jinface)
-# plt.show()
-data=data.reshape((1,7,7))
+# data = mpimg.imread('7.jpg')
+# data = np.array(data)
+# data = data[:, :, 0]
+# data = data / 255.
+#
+# # plt.imshow(jinface)
+# # plt.show()
+# data=data.reshape((1,7,7))
 
 
 print("刚刚导出的patch"+str(np.shape(data)))
@@ -135,7 +135,7 @@ print('done in %.2fs.' % (time() - t0))
 
 print('Learning the dictionary...')
 t0 = time()
-dico = MiniBatchDictionaryLearning(n_components=100, alpha=1, n_iter=500)
+dico = MiniBatchDictionaryLearning(n_components=3, alpha=1, n_iter=500)
 V = dico.fit(data).components_
 dt = time() - t0
 print('done in %.2fs.' % dt)
