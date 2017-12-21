@@ -36,8 +36,19 @@ secondpatch = mpimg.imread(imgpath+'195px_python.jpg')   #读取第二种patch�
 secondpatch = np.array(secondpatch)
 secondpatch =secondpatch [:, :, 0]
 secondpatch = secondpatch / 255.                    #预处理patch
-print("准备插入的patch"+str(np.shape(secondpatch)))  #显示第二种patch的形状
+print("准备插入的secondpatch"+str(np.shape(secondpatch)))  #显示第二种patch的形状
 #print(secondpatch)                                  #显示第二种patch的数据
+
+
+thirdpatch = mpimg.imread(imgpath+'195px_work.jpg')   #读取第二种patch的图像,名为secondpatch,是195*195的python图标
+thirdpatch = np.array(thirdpatch)
+thirdpatch =thirdpatch [:, :, 0]
+thirdpatch = thirdpatch / 255.                    #预处理patch
+print("准备插入的thirdpatch"+str(np.shape(thirdpatch)))  #显示第二种patch的形状
+#print(secondpatch)                                  #显示第二种patch的数据
+
+
+
 
 
 #用第二种patch替换一部分第一种patch
@@ -51,8 +62,10 @@ data[17]=secondpatch#.copy()
 # data[12]=secondpatch
 data[11]=secondpatch
 data[10]=secondpatch
-data[9]=secondpatch
-data[8]=secondpatch
+
+data[9]=thirdpatch
+data[8]=thirdpatch
+
 data[7]=secondpatch
 data[6]=secondpatch
 data[5]=secondpatch
@@ -78,7 +91,7 @@ print('done in %.2fs.' % (time() - t0))
 print('Learning the dictionary...')
 t0 = time()
 #开始字典学习,n_components表示选多少个出来,可以理解为前几个最具代表性的帧,n_iter代表迭代次数
-dico = MiniBatchDictionaryLearning(n_components=10, alpha=1, n_iter=1000)   #dico是字典学习类的一个对象
+dico = MiniBatchDictionaryLearning(n_components=3, alpha=1, n_iter=5000000)   #dico是字典学习类的一个对象
 V = dico.fit(data).components_                     #调用训练函数fit,使用前面做的data作为字典,V即为最终获得的关键字
 dt = time() - t0
 print('done in %.2fs.' % dt)
