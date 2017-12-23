@@ -91,7 +91,7 @@ print('done in %.2fs.' % (time() - t0))
 print('Learning the dictionary...')
 t0 = time()
 #开始字典学习,n_components表示选多少个出来,可以理解为前几个最具代表性的帧,n_iter代表迭代次数
-dico = MiniBatchDictionaryLearning(n_components=3, alpha=1, n_iter=5000000)   #dico是字典学习类的一个对象
+dico = MiniBatchDictionaryLearning(n_components=3, alpha=1, n_iter=4000)   #dico是字典学习类的一个对象
 V = dico.fit(data).components_                     #调用训练函数fit,使用前面做的data作为字典,V即为最终获得的关键字
 dt = time() - t0
 print('done in %.2fs.' % dt)
