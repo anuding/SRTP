@@ -3,7 +3,7 @@
 
 #include "stdafx.h"
 #include <conio.h> 
-
+#include <math.h>
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
 #include <iostream>
@@ -19,16 +19,16 @@ void config();
 void concentration();
 void colorClustering();
 void pointClustering();
-
+void MultiImage_OneWin(const std::string& MultiShow_WinName, const vector<Mat>& SrcImg_V, CvSize SubPlot, CvSize ImgMax_Size = cvSize(400, 280));
 
 
 int main() 
 {
 
 	cout<<CV_VERSION<<endl;
-	pointClustering();
+	//pointClustering();
 	//colorClustering();
-	//concentration();
+	concentration();
 
 
 	//if (averagePic()==-1)//求解平均图
@@ -224,7 +224,7 @@ void concentration()
 	// 查找文件目录下的所有视频文件 
 	//vector<string> videoPathStr = FindAllFile((videoPath + videoSuffix).c_str(), true);
 	// 先读取一个视频文件，用于获取相关的参数 
-	VideoCapture capture("E:/Code_Project/SRTP/CODES/DEMO/DEMO/TEST100.mp4");
+	VideoCapture capture("E:/Code_Project/SRTP/CODES/DEMO/DEMO/TEST200.mp4");
 	// 视频大小 
 	Size videoSize(capture.get(CV_CAP_PROP_FRAME_WIDTH), capture.get(CV_CAP_PROP_FRAME_HEIGHT));
 	// 创建一个视频写入对象 
@@ -233,13 +233,17 @@ void concentration()
 	//for (auto videoName : "E:/Code_Project/SRTP/CODES/DEMO/DEMO/TEST00.mp4")
 	{
 		//capture.open(videoName); // 读入路径下的视频
+		
 
+
+		
 		Mat preFrame;
 		bool stop(false);
 
 		double totleFrameNum = capture.get(CV_CAP_PROP_FRAME_COUNT); // 获取视频总帧数
 		int coun = 0,q;
-		
+		vector<Mat> imgs(50);
+
 		for (int frameNum = 0; frameNum < totleFrameNum; frameNum++)
 		{
 			Mat imgSrc;
@@ -264,22 +268,29 @@ void concentration()
 			
 				
 			
-			if ((matArea / 230400) >= 10) // 面积比例大于10% 
+			if ((matArea / 230400) >= 15) // 面积比例大于10% 
 			{
-				string name = "my";
+				
+				imgs[coun] = imgSrc;
 				coun++;
-				string num;
-				stringstream stream;
-				stream << coun;
-				num = stream.str();   
+				//imshow(name, imgSrc);
+				//waitKey(0);
 
-				name = name + num + ".jpg";
-				imwrite(name, imgSrc);
+				//销毁MyWindow的窗口
+
+				//destroyWindow("MyWindow");
 				
 				cout << "frameNum= "<< frameNum <<"   "<<(matArea / 230400) << endl;
 			}
 			q = frameNum;
 		}
+		vector<Mat> timgs(coun);
+		for (int i = 0; i < coun; i++)
+		{
+			timgs[i] = imgs[i];
+		}
+		int row = sqrt(coun)+1;
+		MultiImage_OneWin("Multiple Images", timgs, cvSize(row, row), cvSize(200,200));
 		cout << endl << endl << "q=" << q << endl;
 		coun = 0;
 	}
@@ -375,4 +386,79 @@ int averagePic()
 
 	cvSaveImage("model.jpg", img_sum_gray);
 	return 0;
+}
+
+
+
+void MultiImage_OneWin(const std::string& MultiShow_WinName, const vector<Mat>& SrcImg_V, CvSize SubPlot, CvSize ImgMax_Size)
+{
+	//Reference : http://blog.csdn.net/yangyangyang20092010/article/details/21740373  
+
+	//************* Usage *************//  
+	//vector<Mat> imgs(4);  
+	//imgs[0] = imread("F:\\SA2014.jpg");  
+	//imgs[1] = imread("F:\\SA2014.jpg");  
+	//imgs[2] = imread("F:\\SA2014.jpg");  
+	//imgs[3] = imread("F:\\SA2014.jpg");  
+	//MultiImage_OneWin("T", imgs, cvSize(2, 2), cvSize(400, 280));  
+
+	//Window's image  
+	Mat Disp_Img;
+	//Width of source image  
+	CvSize Img_OrigSize = cvSize(SrcImg_V[0].cols, SrcImg_V[0].rows);
+	//******************** Set the width for displayed image ********************//  
+	//Width vs height ratio of source image  
+	float WH_Ratio_Orig = Img_OrigSize.width / (float)Img_OrigSize.height;
+	CvSize ImgDisp_Size = cvSize(100, 100);
+	if (Img_OrigSize.width > ImgMax_Size.width)
+		ImgDisp_Size = cvSize(ImgMax_Size.width, (int)ImgMax_Size.width / WH_Ratio_Orig);
+	else if (Img_OrigSize.height > ImgMax_Size.height)
+		ImgDisp_Size = cvSize((int)ImgMax_Size.height*WH_Ratio_Orig, ImgMax_Size.height);
+	else
+		ImgDisp_Size = cvSize(Img_OrigSize.width, Img_OrigSize.height);
+	//******************** Check Image numbers with Subplot layout ********************//  
+	int Img_Num = (int)SrcImg_V.size();
+	if (Img_Num > SubPlot.width * SubPlot.height)
+	{
+		cout << "Your SubPlot Setting is too small !" << endl;
+		exit(0);
+	}
+	//******************** Blank setting ********************//  
+	CvSize DispBlank_Edge = cvSize(80, 60);
+	CvSize DispBlank_Gap = cvSize(15, 15);
+	//******************** Size for Window ********************//  
+	Disp_Img.create(Size(ImgDisp_Size.width*SubPlot.width + DispBlank_Edge.width + (SubPlot.width - 1)*DispBlank_Gap.width,
+		ImgDisp_Size.height*SubPlot.height + DispBlank_Edge.height + (SubPlot.height - 1)*DispBlank_Gap.height), CV_8UC3);
+	Disp_Img.setTo(0);//Background  
+					  //Left top position for each image  
+	int EdgeBlank_X = (Disp_Img.cols - (ImgDisp_Size.width*SubPlot.width + (SubPlot.width - 1)*DispBlank_Gap.width)) / 2;
+	int EdgeBlank_Y = (Disp_Img.rows - (ImgDisp_Size.height*SubPlot.height + (SubPlot.height - 1)*DispBlank_Gap.height)) / 2;
+	CvPoint LT_BasePos = cvPoint(EdgeBlank_X, EdgeBlank_Y);
+	CvPoint LT_Pos = LT_BasePos;
+
+	//Display all images  
+	for (int i = 0; i < Img_Num; i++)
+	{
+		//Obtain the left top position  
+		if ((i%SubPlot.width == 0) && (LT_Pos.x != LT_BasePos.x))
+		{
+			LT_Pos.x = LT_BasePos.x;
+			LT_Pos.y += (DispBlank_Gap.height + ImgDisp_Size.height);
+		}
+		//Writting each to Window's Image  
+		Mat imgROI = Disp_Img(Rect(LT_Pos.x, LT_Pos.y, ImgDisp_Size.width, ImgDisp_Size.height));
+		resize(SrcImg_V[i], imgROI, Size(ImgDisp_Size.width, ImgDisp_Size.height));
+
+		LT_Pos.x += (DispBlank_Gap.width + ImgDisp_Size.width);
+	}
+
+	//Get the screen size of computer  
+	int Scree_W = 1920;// GetSystemMetrics(SM_CXSCREEN);
+	int Scree_H = 1080;// GetSystemMetrics(SM_CYSCREEN);
+
+	cvNamedWindow(MultiShow_WinName.c_str(), CV_WINDOW_AUTOSIZE);
+	cvMoveWindow(MultiShow_WinName.c_str(), (Scree_W - Disp_Img.cols) / 2, (Scree_H - Disp_Img.rows) / 2);//Centralize the window  
+	cvShowImage(MultiShow_WinName.c_str(), &(IplImage(Disp_Img)));
+	cvWaitKey(0);
+	cvDestroyWindow(MultiShow_WinName.c_str());
 }
