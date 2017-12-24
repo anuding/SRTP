@@ -41,9 +41,9 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>50</y>
-      <width>900</width>
-      <height>500</height>
+      <y>49</y>
+      <width>391</width>
+      <height>501</height>
      </rect>
     </property>
     <property name="font">
@@ -57,6 +57,16 @@
     </property>
     <property name="alignment">
      <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QListWidget" name="Lst_KeyFrames">
+    <property name="geometry">
+     <rect>
+      <x>480</x>
+      <y>50</y>
+      <width>491</width>
+      <height>511</height>
+     </rect>
     </property>
    </widget>
   </widget>

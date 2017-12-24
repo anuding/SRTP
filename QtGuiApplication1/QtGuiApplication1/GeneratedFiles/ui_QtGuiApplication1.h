@@ -15,6 +15,7 @@
 #include <QtWidgets/QButtonGroup>
 #include <QtWidgets/QHeaderView>
 #include <QtWidgets/QLabel>
+#include <QtWidgets/QListWidget>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenuBar>
 #include <QtWidgets/QPushButton>
@@ -32,6 +33,7 @@ public:
     QPushButton *Btn_Import;
     QTextEdit *Edt_VideoAddress;
     QLabel *Lab_VideoSummary;
+    QListWidget *Lst_KeyFrames;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
@@ -51,12 +53,15 @@ public:
         Edt_VideoAddress->setGeometry(QRect(20, 0, 861, 31));
         Lab_VideoSummary = new QLabel(centralWidget);
         Lab_VideoSummary->setObjectName(QStringLiteral("Lab_VideoSummary"));
-        Lab_VideoSummary->setGeometry(QRect(20, 50, 900, 500));
+        Lab_VideoSummary->setGeometry(QRect(20, 49, 391, 501));
         QFont font;
         font.setFamily(QString::fromUtf8("\345\276\256\350\275\257\351\233\205\351\273\221"));
         font.setPointSize(22);
         Lab_VideoSummary->setFont(font);
         Lab_VideoSummary->setAlignment(Qt::AlignCenter);
+        Lst_KeyFrames = new QListWidget(centralWidget);
+        Lst_KeyFrames->setObjectName(QStringLiteral("Lst_KeyFrames"));
+        Lst_KeyFrames->setGeometry(QRect(480, 50, 491, 511));
         QtGuiApplication1Class->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(QtGuiApplication1Class);
         menuBar->setObjectName(QStringLiteral("menuBar"));
