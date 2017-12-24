@@ -230,19 +230,15 @@ void concentration()
 	// 创建一个视频写入对象 
 	VideoWriter writer("../result.avi", CV_FOURCC('M', 'J', 'P', 'G'), 25.0, videoSize);
 
-	//for (auto videoName : "E:/Code_Project/SRTP/CODES/DEMO/DEMO/TEST00.mp4")
-	{
-		//capture.open(videoName); // 读入路径下的视频
-		
-
-
-		
+	
+	
+	
 		Mat preFrame;
 		bool stop(false);
 
 		double totleFrameNum = capture.get(CV_CAP_PROP_FRAME_COUNT); // 获取视频总帧数
-		int coun = 0,q;
-		vector<Mat> imgs(50);
+		int KeyframeNum=0;
+		vector<Mat> imgs(totleFrameNum);
 
 		for (int frameNum = 0; frameNum < totleFrameNum; frameNum++)
 		{
@@ -252,7 +248,7 @@ void concentration()
 				break;
 			Mat frame;
 			cvtColor(imgSrc, frame, CV_BGR2GRAY);
-			//++frameNum;
+		
 			if (frameNum == 0)
 			{
 				preFrame = frame;
@@ -268,32 +264,25 @@ void concentration()
 			
 				
 			
-			if ((matArea / 230400) >= 15) // 面积比例大于10% 
+			if ((matArea / 230400) >= 17) // 面积比例大于10% 
 			{
-				
-				imgs[coun] = imgSrc;
-				coun++;
-				//imshow(name, imgSrc);
-				//waitKey(0);
-
-				//销毁MyWindow的窗口
-
-				//destroyWindow("MyWindow");
-				
+				imgs[KeyframeNum] = imgSrc;
+				KeyframeNum++;
 				cout << "frameNum= "<< frameNum <<"   "<<(matArea / 230400) << endl;
 			}
-			q = frameNum;
+			//KeyframeNum = frameNum;
 		}
-		vector<Mat> timgs(coun);
-		for (int i = 0; i < coun; i++)
+
+		vector<Mat> imgsToShow(KeyframeNum);
+		for (int i = 0; i < KeyframeNum; i++)
 		{
-			timgs[i] = imgs[i];
+			imgsToShow[i] = imgs[i];
 		}
-		int row = sqrt(coun)+1;
-		MultiImage_OneWin("Multiple Images", timgs, cvSize(row, row), cvSize(200,200));
-		cout << endl << endl << "q=" << q << endl;
-		coun = 0;
-	}
+		int row = sqrt(KeyframeNum)+1;
+		MultiImage_OneWin("Multiple Images", imgsToShow, cvSize(row, row), cvSize(200,200));
+		cout << endl << endl << "KeyframeNum=" << KeyframeNum << endl;
+		//coun = 0;
+	
 	
 	capture.release();
 	writer.release();
