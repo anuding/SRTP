@@ -1,0 +1,7 @@
+<?xml version="1.0"?> 
+<opencv_storage> 
+<roi>  0 0 640 360</roi> 
+<videoReadPath>E:\Code_Project\SRTP\CODES\DEMO\DEMO\</videoReadPath> 
+<videoSuffix>*.mp4</videoSuffix> 
+<videoSavePath>../result.avi</videoSavePath> 
+</opencv_storage>
