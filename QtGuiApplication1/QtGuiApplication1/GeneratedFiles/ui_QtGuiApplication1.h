@@ -47,13 +47,14 @@ public:
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
         Btn_Import = new QPushButton(centralWidget);
         Btn_Import->setObjectName(QStringLiteral("Btn_Import"));
-        Btn_Import->setGeometry(QRect(910, 0, 93, 28));
+        Btn_Import->setGeometry(QRect(880, 0, 93, 31));
         Edt_VideoAddress = new QTextEdit(centralWidget);
         Edt_VideoAddress->setObjectName(QStringLiteral("Edt_VideoAddress"));
         Edt_VideoAddress->setGeometry(QRect(20, 0, 861, 31));
         Lab_VideoSummary = new QLabel(centralWidget);
         Lab_VideoSummary->setObjectName(QStringLiteral("Lab_VideoSummary"));
-        Lab_VideoSummary->setGeometry(QRect(20, 49, 391, 501));
+        Lab_VideoSummary->setEnabled(false);
+        Lab_VideoSummary->setGeometry(QRect(20, 540, 401, 51));
         QFont font;
         font.setFamily(QString::fromUtf8("\345\276\256\350\275\257\351\233\205\351\273\221"));
         font.setPointSize(22);
@@ -61,7 +62,7 @@ public:
         Lab_VideoSummary->setAlignment(Qt::AlignCenter);
         Lst_KeyFrames = new QListWidget(centralWidget);
         Lst_KeyFrames->setObjectName(QStringLiteral("Lst_KeyFrames"));
-        Lst_KeyFrames->setGeometry(QRect(480, 50, 491, 511));
+        Lst_KeyFrames->setGeometry(QRect(20, 50, 951, 511));
         QtGuiApplication1Class->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(QtGuiApplication1Class);
         menuBar->setObjectName(QStringLiteral("menuBar"));

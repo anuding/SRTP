@@ -17,10 +17,10 @@
    <widget class="QPushButton" name="Btn_Import">
     <property name="geometry">
      <rect>
-      <x>910</x>
+      <x>880</x>
       <y>0</y>
       <width>93</width>
-      <height>28</height>
+      <height>31</height>
      </rect>
     </property>
     <property name="text">
@@ -38,12 +38,15 @@
     </property>
    </widget>
    <widget class="QLabel" name="Lab_VideoSummary">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>49</y>
-      <width>391</width>
-      <height>501</height>
+      <y>540</y>
+      <width>401</width>
+      <height>51</height>
      </rect>
     </property>
     <property name="font">
@@ -62,9 +65,9 @@
    <widget class="QListWidget" name="Lst_KeyFrames">
     <property name="geometry">
      <rect>
-      <x>480</x>
+      <x>20</x>
       <y>50</y>
-      <width>491</width>
+      <width>951</width>
       <height>511</height>
      </rect>
     </property>

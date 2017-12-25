@@ -53,7 +53,7 @@ void QtGuiApplication1::myExitButtonFuc()
 	
 
 		QListWidget *imageList = ui.Lst_KeyFrames;
-	imageList->resize(365, 400);
+	//imageList->resize(365, 400);
 	//设置QListWidget的显示模式  
 	imageList->setViewMode(QListView::IconMode);
 	//设置QListWidget中单元项的图片大小  
